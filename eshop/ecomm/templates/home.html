@@ -1,0 +1,94 @@
+{% extends 'base.html' %} {% block title %} Home {% endblock title %} {% block content %} {% load cart %}
+
+
+<div class="container mt-3">
+    {% comment %} {% if error_message %}
+    <div class="alert alert-danger" role="alert">
+        {{error_message}}
+    </div>
+    {% endif %} {% endcomment %}
+    <div class="row">
+        {% comment %} filter side bar{% if not error_message %}{% endcomment %} 
+
+        <div class="col-lg-3 mx-auto">
+
+            {% comment %} <a href="/" class="list-group-item list-group-item-action" aria-current="true">
+           All Product
+         </a> {% endcomment %}
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" style="width:100%;" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            Choose Category
+          </button>
+                <ul class="dropdown-menu" style="width: 100%;" aria-labelledby="dropdownMenuButton1">
+                    <li> <a href="/" class="list-group-item list-group-item-action" aria-current="true">
+                    All Product
+                     </a>
+                    </li>
+                    {% for cate in cat %}
+                    <li>
+                        <a href="/?category={{cate.id}}" class="list-group-item list-group-item-action" aria-current="true">
+                    {{cate.name}}
+                  </a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% comment %}
+            <a href="/?category={{cate.id}}" class="list-group-item list-group-item-action" aria-current="true">
+    {{cate.name}}
+  </a> {% endfor %} {% endcomment %}
+        </div>
+
+
+        {% comment %} all product {% endcomment %}
+        <div id="product" class="col-lg-9 mx-auto border">
+            <div class="row my-3 mx-auto">
+                {% for product in products %}
+                 
+                {% comment %} <h1>{{product | isExistsInCart:request.session.cart}}</h1> {% endcomment %}
+
+                <div class="card mx-auto mb-3" id="{{product.id}}" style="width: 18rem;">
+                    <img src="{{product.image.url}}" class="card-img-top mx-auto" height=100 alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{Product.name}}</h5>
+                        <p class="card-text"><b>{{product.price}}</b>
+                        </p>
+
+                    </div>
+                    <div class="card-footer row no-gutter">
+
+                        {% comment %} add to cart quant {% endcomment %} 
+                        {% if product|isExistsInCart:request.session.cart %}
+                        <div class="row">
+                            <form action="/#{{product.id}}" method="post" class="col-2">
+                                {% csrf_token %}
+                                <input type="text" name="cartid" value="{{product.id}}" hidden>
+                                <input type="text" name="minus" value="True" hidden>
+                                <input type="submit" value="-" class="btn btn-block btn-dark">
+                            </form>
+                            <div class="text-center col">{{product|cartQunat:request.session.cart}}
+
+                            </div>
+                            <form action="/#{{product.id}}" method="post" class="col-2">
+                                {% csrf_token %}
+                                <input type="text" name="cartid" value="{{product.id}}" hidden>
+                                <input type="submit" value="+" class="btn btn-block btn-dark">
+                            </form>
+                        </div>
+                        {% else %}
+                        <form action="#{{product.id}}" method="post" class="btn-block">
+                            {% csrf_token %}
+                            <input type="text" name="cartid" value="{{product.id}}" hidden>
+                            <input type="submit" class="btn btn-block btn-primary form-control " value="Add to cart">
+                        </form>
+                        {% endif %}
+                    </div>
+
+                </div>
+                {% endfor %} 
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}
